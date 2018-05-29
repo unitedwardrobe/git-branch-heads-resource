@@ -20,3 +20,11 @@ jq \
   ${GIT_RESOURCE_IN:-/opt/git-resource/in} "$@" |
   jq --slurpfile payload $payload \
     '. + {version: ($payload | .[0].version)}'
+
+cd "$@"
+
+branch=$(jq < $payload -r .version.changed)
+tag=$(git tag -l --points-at $branch)
+
+echo $branch > .git/branch
+echo $tag > .git/tag
